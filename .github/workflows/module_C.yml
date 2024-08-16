@@ -17,23 +17,23 @@ jobs:
         id: check_changes
         run: |
           cd src/module_C
-          git diff --exit-code || echo "PROCEED=true" >> $GITHUB_ENV
+          git diff --exit-code || echo "PROCEED_C=true" >> $GITHUB_ENV
         continue-on-error: true
 
       - name: Install all dependencies
-        if: env.PROCEED == 'true'
+        if: env.PROCEED_C == 'true'
         run: yarn
 
       - name: Build
-        if: env.PROCEED == 'true'
+        if: env.PROCEED_C == 'true'
         run: mkdir module_C_build
 
       - name: Copy Artifact
-        if: env.PROCEED == 'true'
+        if: env.PROCEED_C == 'true'
         run : cp README.md module_C_build
 
       - name: Push
-        if: env.PROCEED == 'true'
+        if: env.PROCEED_C == 'true'
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self

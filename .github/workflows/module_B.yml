@@ -13,19 +13,27 @@ jobs:
       - name: git-checkout
         uses: actions/checkout@v3
 
-      - name: Change  Directory
-        run: cd src/module_B
+      - name: Change Directory and Check for Changes
+        id: check_changes
+        run: |
+          cd src/module_B
+          git diff --exit-code || echo "PROCEED_B=true" >> $GITHUB_ENV
+        continue-on-error: true
 
       - name: Install all dependencies
+        if: env.PROCEED_B == 'true'
         run: yarn
 
       - name: Build
+        if: env.PROCEED_B == 'true'
         run: mkdir module_B_build
 
       - name: Copy Artifact
+        if: env.PROCEED_B == 'true'
         run : cp README.md module_B_build
 
       - name: Push
+        if: env.PROCEED_B == 'true'
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
