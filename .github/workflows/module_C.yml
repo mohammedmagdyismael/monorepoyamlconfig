@@ -16,36 +16,30 @@ jobs:
       - name: Change Directory and Check for Changes
         id: check_changes
         run: |
-          cd src/module_A
-          git diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
-        continue-on-error: true
-
-      - name: Set Proceed Variable
-        id: set_proceed
-        run: |
-          if [ -f src/module_A/changes_detected.txt ]; then
-            echo "PROCEED_C=true" >> $GITHUB_ENV
-          else
+          cd src/module_C
+          if git diff --quiet -- src/module_C; then
             echo "PROCEED_C=false" >> $GITHUB_ENV
+          else
+            echo "PROCEED_C=true" >> $GITHUB_ENV
           fi
 
       - name: Install all dependencies
         if: env.PROCEED_C == 'true'
         run: |
-          cd src/module_A
+          cd src/module_C
           yarn
 
       - name: Build
         if: env.PROCEED_C == 'true'
         run: |
-          cd src/module_A
-          mkdir module_A_build
+          cd src/module_C
+          mkdir module_C_build
 
       - name: Copy Artifact
         if: env.PROCEED_C == 'true'
         run: |
-          cd src/module_A
-          cp README.md module_A_build
+          cd src/module_C
+          cp README.md module_C_build
 
       - name: Push
         if: env.PROCEED_C == 'true'
@@ -53,7 +47,7 @@ jobs:
         env:
           REPO: self
           BRANCH: build
-          FOLDER: src/module_A/module_A_build
-          TARGET_DIR: module_A_build
+          FOLDER: src/module_C/module_C_build
+          TARGET_DIR: module_C_build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Build: ({sha}) {msg}"

@@ -17,7 +17,11 @@ jobs:
         id: check_changes
         run: |
           cd src/module_A
-          echo "PROCEED_A=false" >> $GITHUB_ENV
+          if git diff --quiet -- src/module_A; then
+            echo "PROCEED_A=false" >> $GITHUB_ENV
+          else
+            echo "PROCEED_A=true" >> $GITHUB_ENV
+          fi
 
       - name: Install all dependencies
         if: env.PROCEED_A == 'true'
