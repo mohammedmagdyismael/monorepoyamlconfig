@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Change  Directory
-        run: cd module_B
+        run: cd src/module_B
 
       - name: Install all dependencies
         run: yarn
@@ -23,7 +23,7 @@ jobs:
         run: mkdir module_B_build # The build command of your project
 
       - name: Copy Artifact
-        run : cp -r * module_B_build
+        run : cp README.md module_B_build
 
       - name: Push
         uses: s0/git-publish-subdir-action@develop
