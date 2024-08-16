@@ -17,17 +17,7 @@ jobs:
         id: check_changes
         run: |
           cd src/module_A
-          git diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
-        continue-on-error: true
-
-      - name: Set Proceed Variable
-        id: set_proceed
-        run: |
-          if [ -f src/module_A/changes_detected.txt ]; then
-            echo "PROCEED_A=true" >> $GITHUB_ENV
-          else
-            echo "PROCEED_A=false" >> $GITHUB_ENV
-          fi
+          git diff --exit-code || echo "PROCEED_A=true" >> $GITHUB_ENV
 
       - name: Install all dependencies
         if: env.PROCEED_A == 'true'
