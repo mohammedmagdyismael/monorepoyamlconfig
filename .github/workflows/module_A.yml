@@ -13,11 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Change Directory and Check for Changes
+      - name: Check for Changes in Directory
         id: check_changes
         run: |
           cd src/module_A
-          if git diff --quiet -- src/module_A; then
+          # Check if there are changes in the directory compared to the last commit
+          if git diff --quiet HEAD^ HEAD -- src/module_A; then
             echo "PROCEED_A=false" >> $GITHUB_ENV
           else
             echo "PROCEED_A=true" >> $GITHUB_ENV
@@ -26,20 +27,20 @@ jobs:
       - name: Install all dependencies
         if: env.PROCEED_A == 'true'
         run: |
-          cd src/module_A
           yarn
+        working-directory: src/module_A
 
       - name: Build
         if: env.PROCEED_A == 'true'
         run: |
-          cd src/module_A
           mkdir module_A_build
+        working-directory: src/module_A
 
       - name: Copy Artifact
         if: env.PROCEED_A == 'true'
         run: |
-          cd src/module_A
           cp README.md module_A_build
+        working-directory: src/module_A
 
       - name: Push
         if: env.PROCEED_A == 'true'
