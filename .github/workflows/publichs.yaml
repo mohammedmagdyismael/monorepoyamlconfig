@@ -1,0 +1,54 @@
+name: Build Modules
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # Fetch the previous commit to compare changes
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14' # Set the appropriate Node.js version
+
+      - name: Determine changed modules
+        id: changed-modules
+        run: |
+          # Get the list of changed files between the current and previous commit
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+
+          # Initialize an empty list for changed modules
+          CHANGED_MODULES=""
+
+          # Check each module directory
+          for MODULE in src/module_A src/module_B src/module_C; do
+            if echo "$CHANGED_FILES" | grep -q "^$MODULE/"; then
+              CHANGED_MODULES="$CHANGED_MODULES $MODULE"
+            fi
+          done
+
+          # Output changed modules as a GitHub Actions environment variable
+          echo "CHANGED_MODULES=$CHANGED_MODULES" >> $GITHUB_ENV
+
+      - name: Build changed modules
+        if: env.CHANGED_MODULES != ''
+        run: |
+          for MODULE in $CHANGED_MODULES; do
+            echo "Building $MODULE..."
+            cd $MODULE
+            npm install
+            npm run build
+            cd ../.. # Navigate back to the root directory
+          done
