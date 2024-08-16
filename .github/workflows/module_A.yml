@@ -22,7 +22,7 @@ jobs:
         run: mkdir module_A_build # The build command of your project
 
       - name: Copy Artifact
-        run : cp . module_A_build
+        run : cp -r * module_A_build
 
       - name: Push
         uses: s0/git-publish-subdir-action@develop
