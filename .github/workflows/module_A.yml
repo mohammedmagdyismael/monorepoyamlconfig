@@ -17,7 +17,7 @@ jobs:
         id: check_changes
         run: |
           cd src/module_A
-          git diff --exit-code || echo "PROCEED_A=true" >> $GITHUB_ENV
+          echo "PROCEED_A=true" >> $GITHUB_ENV
 
       - name: Install all dependencies
         if: env.PROCEED_A == 'true'
