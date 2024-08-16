@@ -3,7 +3,7 @@ name: Generate a build and push to another branch
 on:
   push:
     branches:
-      - main # The branch name your are commit the new changes
+      - main
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
         run: yarn
 
       - name: Build
-        run: mkdir module_C_build # The build command of your project
+        run: mkdir module_C_build
 
       - name: Copy Artifact
         run : cp README.md module_C_build
@@ -29,8 +29,8 @@ jobs:
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
-          BRANCH: build # The branch name where you want to push the assets
-          FOLDER: module_C_build # The directory where your assets are generated
+          BRANCH: build
+          FOLDER: module_C_build
           TARGET_DIR: module_C_build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
-          MESSAGE: "Build: ({sha}) {msg}" # The commit message
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Build: ({sha}) {msg}"
