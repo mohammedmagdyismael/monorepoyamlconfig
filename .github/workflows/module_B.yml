@@ -13,7 +13,8 @@ jobs:
       - name: git-checkout
         uses: actions/checkout@v3
 
-        
+      - name: Change  Directory
+        run: cd module_B
 
       - name: Install all dependencies
         run: yarn
