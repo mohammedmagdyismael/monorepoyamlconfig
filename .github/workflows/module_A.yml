@@ -10,27 +10,42 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: git-checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Change Directory and Check for Changes
         id: check_changes
         run: |
           cd src/module_A
-          git diff --exit-code || echo "PROCEED_A=true" >> $GITHUB_ENV
+          git diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
         continue-on-error: true
+
+      - name: Set Proceed Variable
+        id: set_proceed
+        run: |
+          if [ -f src/module_A/changes_detected.txt ]; then
+            echo "PROCEED_A=true" >> $GITHUB_ENV
+          else
+            echo "PROCEED_A=false" >> $GITHUB_ENV
+          fi
 
       - name: Install all dependencies
         if: env.PROCEED_A == 'true'
-        run: yarn
+        run: |
+          cd src/module_A
+          yarn
 
       - name: Build
         if: env.PROCEED_A == 'true'
-        run: mkdir module_A_build
+        run: |
+          cd src/module_A
+          mkdir module_A_build
 
       - name: Copy Artifact
         if: env.PROCEED_A == 'true'
-        run : cp README.md module_A_build
+        run: |
+          cd src/module_A
+          cp README.md module_A_build
 
       - name: Push
         if: env.PROCEED_A == 'true'
@@ -38,7 +53,7 @@ jobs:
         env:
           REPO: self
           BRANCH: build
-          FOLDER: module_A_build
+          FOLDER: src/module_A/module_A_build
           TARGET_DIR: module_A_build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Build: ({sha}) {msg}"
